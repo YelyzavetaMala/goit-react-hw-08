@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { setUser, setToken, setRefreshing, logoutUser } from './slice';
+import { setUser, setToken, setRefreshing } from './slice';
 
 export const register = createAsyncThunk(
   'auth/register',
@@ -36,7 +36,9 @@ export const login = createAsyncThunk(
 export const refreshUser = createAsyncThunk(
   'auth/refresh',
   async (_, { dispatch, getState }) => {
-    const { token } = getState().auth;
+    const state = getState().auth; 
+    const token = state.token; 
+    setToken(token); 
     if (!token) return;
     dispatch(setRefreshing(true));
     try {
@@ -51,5 +53,13 @@ export const refreshUser = createAsyncThunk(
     } finally {
       dispatch(setRefreshing(false));
     }
+  },
+  {
+    condition: (_, thunkAPI) => {
+      const state = thunkAPI.getState().auth; 
+      const token = state.token; 
+      if (!token) return false;
+      return true;
+    },
   }
 );

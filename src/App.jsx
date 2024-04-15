@@ -1,15 +1,18 @@
-import './App.css'
+import "./App.css";
 
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Layout from './components/Layout';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import RegistrationPage from './pages/RegistrationPage';
-import ContactsPage from './pages/ContactsPage';
-import PrivateRoute from './components/PrivateRoute';
-import { refreshUser } from './redux/auth/operations';
+import { lazy, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Layout from "./components/Layout";
+import PrivateRoute from "./components/PrivateRoute";
+import { refreshUser } from "./redux/auth/operations";
+import Layout from "./components/";
+import PrivateRoute from "./components/PrivateRoute";
+
+const HomePage = lazy(() => import("../../pages/HomePage"));
+const RegistrationPage = lazy(() => import("../../pages/RegistrationPage"));
+const LoginPage = lazy(() => import("../../pages/LoginPage"));
+const ContactsPage = lazy(() => import("../../pages/ContactsPage"));
 
 function App() {
   const dispatch = useDispatch();
@@ -21,12 +24,12 @@ function App() {
   return (
     <Router>
       <Layout>
-        <Switch>
+        <Routers>
           <Route exact path="/" component={HomePage} />
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegistrationPage} />
           <PrivateRoute path="/contacts" component={ContactsPage} />
-        </Switch>
+        </Routers>
       </Layout>
     </Router>
   );
