@@ -1,16 +1,19 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { setUser, setToken, setRefreshing } from './slice';
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { setUser, setToken, setRefreshing } from "./slice";
 
 export const register = createAsyncThunk(
-  'auth/register',
+  "auth/register",
   async ({ name, email, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post('https://connections-api.herokuapp.com/users/signup', {
-        name,
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://connections-api.herokuapp.com/users/signup",
+        {
+          name,
+          email,
+          password,
+        }
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -19,13 +22,16 @@ export const register = createAsyncThunk(
 );
 
 export const login = createAsyncThunk(
-  'auth/login',
+  "auth/login",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post('https://connections-api.herokuapp.com/users/login', {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://connections-api.herokuapp.com/users/login",
+        {
+          email,
+          password,
+        }
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -34,32 +40,59 @@ export const login = createAsyncThunk(
 );
 
 export const refreshUser = createAsyncThunk(
-  'auth/refresh',
+  "auth/refresh",
   async (_, { dispatch, getState }) => {
-    const state = getState().auth; 
-    const token = state.token; 
-    setToken(token); 
+    const state = getState().auth;
+    const token = state.token;
+    setToken(token);
     if (!token) return;
     dispatch(setRefreshing(true));
     try {
-      const response = await axios.get('https://connections-api.herokuapp.com/users/current', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        "https://connections-api.herokuapp.com/users/current",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       dispatch(setUser(response.data));
     } catch (error) {
-      console.error('Error refreshing user:', error);
+      console.error("Error refreshing user:", error);
     } finally {
       dispatch(setRefreshing(false));
     }
   },
   {
     condition: (_, thunkAPI) => {
-      const state = thunkAPI.getState().auth; 
-      const token = state.token; 
+      const state = thunkAPI.getState().auth;
+      const token = state.token;
       if (!token) return false;
       return true;
     },
+  }
+);
+
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (_, { dispatch, getState }) => {
+    const state = getState().auth;
+    const token = state.token;
+    if (!token) return;
+    try {
+      await axios.post(
+        "https://connections-api.herokuapp.com/users/logout",
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      dispatch(setUser(null));
+      dispatch(setToken(null));
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
   }
 );

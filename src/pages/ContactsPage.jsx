@@ -25,7 +25,6 @@ export default function ContactsPage() {
       <SearchBox />
       {isLoading && <p>Loading contacts...</p>}
       {error && <p>{error}</p>}
-      {/* {items.length > 0 && <Contacts />} */}
       <Contacts />
     </>
   );

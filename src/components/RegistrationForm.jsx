@@ -1,7 +1,7 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
-import { register } from "../../redux/auth/operations";
+import { register } from "../redux/auth/operations";
 
 import { IoPersonAddSharp } from "react-icons/io5";
 

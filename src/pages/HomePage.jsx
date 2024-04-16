@@ -1,9 +1,5 @@
 const HomePage = () => {
-  return (
-    <div>
-      <h1>Welcome!</h1>
-    </div>
-  );
+  return <div>Task manager welcome page 💁‍♀️ </div>;
 };
 
 export default HomePage;

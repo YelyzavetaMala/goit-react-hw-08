@@ -1,64 +1,54 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { useDispatch } from "react-redux";
-import { login } from "../../redux/auth/operations";
-import * as Yup from "yup";
-
-const UserRegisterSchema = Yup.object().shape({
-  email: Yup.string()
-    .required("Email is required!")
-    .email("Must be a valid email!"),
-  password: Yup.string()
-    .required("Password is required!")
-    .min(8, "Password must be at least 8 characters!"),
-});
-
-const INITIAL_FORM_DATA = {
-  email: "",
-  password: "",
-};
+import { Form } from "formik";
+import { useState } from "react";
 
 const LoginForm = () => {
-  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-  const handleSubmit = (formData, formActions) => {
-    dispatch(login(formData));
-    formActions.resetForm();
-    formActions.setErrors({});
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData);
+    setFormData({
+      email: "",
+      password: "",
+    });
   };
 
   return (
-    <Formik
-      validationSchema={UserRegisterSchema}
-      initialValues={INITIAL_FORM_DATA}
-      onSubmit={handleSubmit}
-    >
-      <Form>
-        <h2>Login</h2>
+    <Form onSubmit={handleSubmit}>
+      <label>
+        <span>Email</span>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+      </label>
+      <label>
+        <span>Password</span>
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+      </label>
 
-        <label>
-          <span>Email:</span>
-          <Field placeholder="alex@patron.com" type="email" name="email" />
-          <ErrorMessage name="email" component="span" />
-        </label>
-        <label>
-          <span>Password:</span>
-          <Field
-            placeholder="Enter your password"
-            type="password"
-            name="password"
-          />
-          <ErrorMessage name="password" component="span" />
-        </label>
-
-        <button
-          type="submit"
-          title="Click to register user"
-          aria-label="Add new email"
-        >
-          LogIn
-        </button>
-      </Form>
-    </Formik>
+      <button type="submit">LogIn</button>
+    </Form>
   );
 };
 
