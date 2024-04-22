@@ -1,77 +1,39 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import * as Yup from "yup";
 import { useDispatch } from "react-redux";
-import { register } from "../redux/auth/operations";
+import { register } from "../../redux/auth/operations";
 
-import { IoPersonAddSharp } from "react-icons/io5";
-
-const UserRegisterSchema = Yup.object().shape({
-  name: Yup.string()
-    .required("User name is required!")
-    .min(2, "User name must be at least 2 characters!")
-    .max(50, "User name must be less than 50 characters!"),
-  email: Yup.string()
-    .required("Email is required!")
-    .email("Must be a valid email!"),
-  password: Yup.string()
-    .required("Password is required!")
-    .min(8, "Password must be at least 8 characters!"),
-});
-
-const INITIAL_FORM_DATA = {
-  name: "",
-  email: "",
-  password: "",
-};
-
-const RegisterForm = () => {
+export const RegisterForm = () => {
   const dispatch = useDispatch();
-  const handleSubmit = (data, formActions) => {
-    console.log("data Register: ", data);
-    dispatch(register(data));
-    formActions.resetForm();
-    formActions.setErrors({});
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+
+    dispatch(
+      register({
+        name: form.elements.name.value,
+        email: form.elements.email.value,
+        password: form.elements.password.value,
+      })
+    );
+
+    form.reset();
   };
 
   return (
-    <Formik
-      validationSchema={UserRegisterSchema}
-      initialValues={INITIAL_FORM_DATA}
-      onSubmit={handleSubmit}
-    >
-      <Form>
-        <h2>Register</h2>
-
-        <label>
-          <span>User name:</span>
-          <Field placeholder="Alex Mihalich" type="text" name="name" />
-          <ErrorMessage name="name" component="span" />
-        </label>
-        <label>
-          <span>Email:</span>
-          <Field placeholder="alex@patron.com" type="email" name="email" />
-          <ErrorMessage name="email" component="span" />
-        </label>
-        <label>
-          <span>Password:</span>
-          <Field
-            placeholder="Enter your password"
-            type="password"
-            name="password"
-          />
-          <ErrorMessage name="password" component="span" />
-        </label>
-
-        <button
-          type="submit"
-          title="Click to register user"
-          aria-label="Add new mailbox"
-        >
-          Register <IoPersonAddSharp />
-        </button>
-      </Form>
-    </Formik>
+    <form onSubmit={handleSubmit} autoComplete="off">
+      <label>
+        Username
+        <input type="text" name="name" />
+      </label>
+      <label>
+        Email
+        <input type="email" name="email" />
+      </label>
+      <label>
+        Password
+        <input type="password" name="password" />
+      </label>
+      <button type="submit">Register</button>
+    </form>
   );
 };
-
-export default RegisterForm;

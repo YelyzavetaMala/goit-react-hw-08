@@ -1,23 +1,12 @@
-import { Route } from "react-router-dom";
-import PropTypes from "prop-types";
-import AppBar from "./AppBar";
+import { Suspense } from "react";
+import { Outlet } from "react-router-dom";
+import { AppBar } from "./AppBar";
 
-const Layout = ({ component: Component, ...rest }) => {
+export const Layout = ({ children }) => {
   return (
-    <Route
-      {...rest}
-      render={(props) => (
-        <div>
-          <AppBar />
-          <Component {...props} />
-        </div>
-      )}
-    />
+    <div style={{ maxWidth: 960, margin: "0 auto", padding: "0 16px" }}>
+      <AppBar />
+      <Suspense fallback={null}>{children}</Suspense>
+    </div>
   );
 };
-
-Layout.propTypes = {
-  component: PropTypes.elementType.isRequired,
-};
-
-export default Layout;

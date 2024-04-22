@@ -1,55 +1,41 @@
-import { Form } from "formik";
-import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { logIn } from "../../redux/auth/operations";
 
-const LoginForm = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+export const LoginForm = () => {
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
-    setFormData({
-      email: "",
-      password: "",
-    });
+    const form = e.currentTarget;
+
+    dispatch(
+      logIn({
+        email: form.elements.email.value,
+        password: form.elements.password.value,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        console.log("login success");
+      })
+      .catch(() => {
+        console.log("login error");
+      });
+
+    form.reset();
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} autoComplete="off">
       <label>
-        <span>Email</span>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
+        Email
+        <input type="email" name="email" />
       </label>
       <label>
-        <span>Password</span>
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
+        Password
+        <input type="password" name="password" />
       </label>
-
-      <button type="submit">LogIn</button>
-    </Form>
+      <button type="submit">Log In</button>
+    </form>
   );
 };
-
-export default LoginForm;

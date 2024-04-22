@@ -1,98 +1,66 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { setUser, setToken, setRefreshing } from "./slice";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+
+axios.defaults.baseURL = "https://connections-api.herokuapp.com";
+
+const setAuthHeader = (token) => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+};
+const clearAuthHeader = () => {
+  axios.defaults.headers.common.Authorization = "";
+};
 
 export const register = createAsyncThunk(
   "auth/register",
-  async ({ name, email, password }, { rejectWithValue }) => {
+  async (credentials, thunkAPI) => {
     try {
-      const response = await axios.post(
-        "https://connections-api.herokuapp.com/users/signup",
-        {
-          name,
-          email,
-          password,
-        }
-      );
-      return response.data;
+      const res = await axios.post("/users/signup", credentials);
+      setAuthHeader(res.data.token);
+      return res.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
 
-export const login = createAsyncThunk(
+export const logIn = createAsyncThunk(
   "auth/login",
-  async ({ email, password }, { rejectWithValue }) => {
+  async (credentials, thunkAPI) => {
     try {
-      const response = await axios.post(
-        "https://connections-api.herokuapp.com/users/login",
-        {
-          email,
-          password,
-        }
-      );
-      return response.data;
+      const res = await axios.post("/users/login", credentials);
+      setAuthHeader(res.data.token);
+      return res.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
+
+export const logOut = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
+  try {
+    await axios.post("/users/logout");
+    clearAuthHeader();
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.message);
+  }
+});
 
 export const refreshUser = createAsyncThunk(
   "auth/refresh",
-  async (_, { dispatch, getState }) => {
-    const state = getState().auth;
-    const token = state.token;
-    setToken(token);
-    if (!token) return;
-    dispatch(setRefreshing(true));
-    try {
-      const response = await axios.get(
-        "https://connections-api.herokuapp.com/users/current",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      dispatch(setUser(response.data));
-    } catch (error) {
-      console.error("Error refreshing user:", error);
-    } finally {
-      dispatch(setRefreshing(false));
-    }
-  },
-  {
-    condition: (_, thunkAPI) => {
-      const state = thunkAPI.getState().auth;
-      const token = state.token;
-      if (!token) return false;
-      return true;
-    },
-  }
-);
+  async (_, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const persistedToken = state.auth.token;
 
-export const logout = createAsyncThunk(
-  "auth/logout",
-  async (_, { dispatch, getState }) => {
-    const state = getState().auth;
-    const token = state.token;
-    if (!token) return;
+    if (persistedToken === null) {
+      return thunkAPI.rejectWithValue("Unable to fetch user");
+    }
+
     try {
-      await axios.post(
-        "https://connections-api.herokuapp.com/users/logout",
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      dispatch(setUser(null));
-      dispatch(setToken(null));
+      setAuthHeader(persistedToken);
+      const res = await axios.get("/users/me");
+      return res.data;
     } catch (error) {
-      console.error("Error logging out:", error);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
