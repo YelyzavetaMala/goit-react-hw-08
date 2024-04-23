@@ -1,15 +1,12 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import DocumentTitle from "../components/DocumentTitle";
 import ContactForm from "../components/ContactForm";
 import ContactList from "../components/ContactList";
 import { apiGetUserContacts } from "../redux/contacts/operations";
-import { selectError, selectIsLoading } from "../redux/contacts/selectors";
 
 export default function ContactsPage() {
   const dispatch = useDispatch();
-  const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
 
   useEffect(() => {
     dispatch(apiGetUserContacts());
@@ -19,8 +16,6 @@ export default function ContactsPage() {
     <>
       <DocumentTitle>Phonebook</DocumentTitle>
       <ContactForm />
-      {isLoading && <p>Loading contacts...</p>}
-      {error && <p>{error}</p>}
       <ContactList />
     </>
   );
