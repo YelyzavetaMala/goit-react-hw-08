@@ -112,4 +112,5 @@ export const selectFilteredContacts = createSelector(
   }
 );
 
+export const { reducer: contactsReducer } = contactsSlice;
 export default contactsSlice.reducer;
