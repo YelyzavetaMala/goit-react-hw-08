@@ -4,7 +4,7 @@ import {
   createAsyncThunk,
 } from "@reduxjs/toolkit";
 import axios from "axios";
-import { logOut } from "../auth/slice";
+import { logOut } from "../auth/operations";
 
 export const clearContacts = createAsyncThunk("contacts/clearAll", async () => {
   try {
