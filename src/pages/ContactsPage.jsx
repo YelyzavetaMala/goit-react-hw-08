@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DocumentTitle from "../components/DocumentTitle";
-import SearchBox from "../components/SearchBox";
 import ContactForm from "../components/ContactForm";
 import ContactList from "../components/ContactList";
 import { apiGetUserContacts } from "../redux/contacts/operations";
@@ -20,7 +19,6 @@ export default function ContactsPage() {
     <>
       <DocumentTitle>Phonebook</DocumentTitle>
       <ContactForm />
-      <SearchBox />
       {isLoading && <p>Loading contacts...</p>}
       {error && <p>{error}</p>}
       <ContactList />
