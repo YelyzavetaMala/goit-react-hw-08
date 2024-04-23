@@ -1,51 +1,10 @@
-import {
-  createSelector,
-  createSlice,
-  createAsyncThunk,
-} from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
 import { logOut } from "../auth/operations";
-
-export const clearContacts = createAsyncThunk("contacts/clearAll", async () => {
-  try {
-    await axios.delete("/contacts");
-  } catch (error) {
-    throw Error("Failed to clear contacts");
-  }
-});
-
-export const fetchContacts = createAsyncThunk("contacts/fetchAll", async () => {
-  try {
-    const response = await axios.get("/contacts");
-    return response.data;
-  } catch (error) {
-    throw Error("Failed to fetch contacts");
-  }
-});
-
-export const addContact = createAsyncThunk(
-  "contacts/addContact",
-  async (newContact) => {
-    try {
-      const response = await axios.post("/contacts", newContact);
-      return response.data;
-    } catch (error) {
-      throw Error("Failed to add contact");
-    }
-  }
-);
-
-export const deleteContact = createAsyncThunk(
-  "contacts/deleteContact",
-  async (contactId) => {
-    try {
-      await axios.delete(`/contacts/${contactId}`);
-      return contactId;
-    } catch (error) {
-      throw Error("Failed to delete contact");
-    }
-  }
-);
+import {
+  fetchContacts,
+  addContact,
+  deleteContact,
+} from "../contacts/operations";
 
 const contactsSlice = createSlice({
   name: "contacts",

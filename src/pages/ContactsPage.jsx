@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import DocumentTitle from "../components/DocumentTitle";
 import ContactForm from "../components/ContactForm";
 import ContactList from "../components/ContactList";
+import SearchBox from "../components/SearchBox";
 import { fetchContacts } from "../redux/contacts/operations";
 
 export default function ContactsPage() {
@@ -14,7 +14,7 @@ export default function ContactsPage() {
 
   return (
     <>
-      <DocumentTitle>Phonebook</DocumentTitle>
+      <SearchBox />
       <ContactForm />
       <ContactList />
     </>
