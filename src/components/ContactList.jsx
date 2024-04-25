@@ -7,7 +7,7 @@ export const ContactList = () => {
 
   return (
     <ul>
-      {filteredContacts.map(({ contact }) => (
+      {filteredContacts.map((contact) => (
         <li key={contact.id}>
           <Contact
             name={contact.name}
